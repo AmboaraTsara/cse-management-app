@@ -1,3 +1,4 @@
+CREATE DATABASE cse-management;
 
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
@@ -10,7 +11,6 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Table budgets
 CREATE TABLE IF NOT EXISTS budgets (
     id SERIAL PRIMARY KEY,
     year INTEGER UNIQUE NOT NULL,
@@ -20,7 +20,6 @@ CREATE TABLE IF NOT EXISTS budgets (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Table requests
 CREATE TABLE IF NOT EXISTS requests (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
@@ -32,7 +31,6 @@ CREATE TABLE IF NOT EXISTS requests (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Table audit_logs
 CREATE TABLE IF NOT EXISTS audit_logs (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
@@ -44,7 +42,6 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Index pour améliorer les performances
 CREATE INDEX idx_requests_user_id ON requests(user_id);
 CREATE INDEX idx_requests_status ON requests(status);
 CREATE INDEX idx_audit_logs_user_id ON audit_logs(user_id);
@@ -52,7 +49,7 @@ CREATE INDEX idx_audit_logs_timestamp ON audit_logs(timestamp);
 
 -- Insertion d'un admin par défaut (mot de passe: admin123)
 INSERT INTO users (email, password, role, first_name, last_name) 
-VALUES ('admin@cse.com', '$2b$10$YourHashedPasswordHere', 'ADMIN', 'Admin', 'System') 
+VALUES ('admin@cse.com', '$2b$10$50Zbaenip06X8ITlAS3N2uKU3XjChmrRYhAJ..LPFkblStsH5RCfC', 'ADMIN', 'Admin', 'System') 
 ON CONFLICT (email) DO NOTHING;
 
 INSERT INTO budgets (year, total_amount, remaining_amount) 
@@ -69,7 +66,7 @@ VALUES (
 INSERT INTO users (email, password, role, first_name, last_name) 
 VALUES (
     'manager@cse.com', 
-    '$2b$10$X7U5V7kq9gU8Q7W5V3kq9uY7X5V3kq9uY7X5V3kq9u', 
+    '$2b$10$50Zbaenip06X8ITlAS3N2uKU3XjChmrRYhAJ..LPFkblStsH5RCfC', 
     'MANAGER', 
     'Manager', 
     'Team'
@@ -78,8 +75,31 @@ VALUES (
 INSERT INTO users (email, password, role, first_name, last_name) 
 VALUES (
     'user@cse.com', 
-    '$2b$10$X7U5V7kq9gU8Q7W5V3kq9uY7X5V3kq9uY7X5V3kq9u', 
+    '$2b$10$50Zbaenip06X8ITlAS3N2uKU3XjChmrRYhAJ..LPFkblStsH5RCfC', 
     'BENEFICIARY', 
     'Simple', 
     'User'
 ) ON CONFLICT (email) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS transactions (
+  id SERIAL PRIMARY KEY,
+  request_id INTEGER NOT NULL REFERENCES requests(id),
+  amount DECIMAL(10, 2) NOT NULL,
+  type VARCHAR(100) NOT NULL,
+  beneficiary_name VARCHAR(255) NOT NULL,
+  beneficiary_email VARCHAR(255) NOT NULL,
+  approved_by VARCHAR(255),
+  paid_by VARCHAR(255) NOT NULL,
+  approved_at TIMESTAMP,
+  paid_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_transactions_request_id ON transactions(request_id);
+CREATE INDEX idx_transactions_paid_at ON transactions(paid_at);
+
+ALTER TABLE requests 
+ADD COLUMN IF NOT EXISTS approved_by VARCHAR(255),
+ADD COLUMN IF NOT EXISTS approved_at TIMESTAMP,
+ADD COLUMN IF NOT EXISTS paid_by VARCHAR(255),
+ADD COLUMN IF NOT EXISTS paid_at TIMESTAMP;
