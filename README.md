@@ -66,36 +66,36 @@ Application SaaS complète pour la gestion des demandes d'aide sociale d'un CSE 
 - PostgreSQL 
 - npm 
 
-1. Cloner le projet
-git clone https://github.com/Amboara Tsara/cse-management-app.git
+#### 1. Cloner le projet
+git clone [https://github.com/Amboara Tsara/cse-management-app.git](https://github.com/AmboaraTsara/cse-management-app.git)
 cd cse-management-app
-2. Configuration de la base de données
+#### 2. Configuration de la base de données
 # Créer la base de données
 psql -U postgres -c "CREATE DATABASE cse_management;"
 
 # Exécuter le script SQL
 psql -U postgres -d cse_management -f config/schema.sql
 
-3. Backend
+#### 3. Backend
 cd backend
 npm install
 cp .env.example .env
-# Éditer .env avec vos informations
+#### Éditer .env avec vos informations
 npm run dev
 
-4. Frontend
+#### 4. Frontend
 cd frontend
 npm install
 cp .env.example .env
-# Éditer .env avec l'URL du backend
+#### Éditer .env avec l'URL du backend
 npm start
 
-5. Accès
+#### 5. Accès
 Frontend : http://localhost:3000
 Backend API : http://localhost:5000/api
 Health check : http://localhost:5000/api/health
 
-Variables d'environnement
+#### Variables d'environnement
 Backend (.env)
 env
 PORT=5000
@@ -110,14 +110,14 @@ DB_PASSWORD=postgres
 JWT_SECRET=secret_jwt_tres_long_et_securise_123456789
 JWT_EXPIRES_IN=7d
 
-Frontend (.env)
+#### Frontend (.env)
 REACT_APP_API_URL=http://localhost:5000/api
 Endpoints API
 
-Authentification
+#### Authentification
 POST	/api/auth/login	Connexion	Public
 
-Demandes
+#### Demandes
 GET	/api/requests	Liste des demandes	
 GET	/api/requests/:id	Détail d'une demande	
 POST	/api/requests	Créer une demande	BENEFICIARY
@@ -126,13 +126,13 @@ PUT	/api/requests/:id/submit	Soumettre une demande	BENEFICIARY
 PUT	/api/requests/:id/status	Changer statut	MANAGER/ADMIN
 DELETE	/api/requests/:id	Supprimer une demande	Propriétaire ou ADMIN
 
-Budget
+#### Budget
 GET	/api/budget/current	Budget année courante	MANAGER/ADMIN
 GET	/api/budget/:year	Budget par année	ADMIN
 PUT	/api/budget/:year	Mettre à jour budget	ADMIN
 GET	/api/budget/history	Historique	ADMIN
 
-Sécurité
+### Sécurité
 1. Authentification
 ✅ Mots de passe hashés avec bcrypt (10 rounds)
 ✅ Tokens JWT avec expiration (7 jours)
@@ -163,12 +163,12 @@ Sécurité
 ✅ Variables d'environnement pour les secrets
 ✅ Gestion d'erreurs sans fuite d'information
 
-Comptes de test
+#### Comptes de test
 ADMIN    : admin@cse.com / admin123
 MANAGER  : manager@cse.com / admin123
 BENEFICIARY : user@cse.com / admin123
 
-Structure du projet
+#### Structure du projet
 cse-management-app/
 ├── backend/
 │   ├── src/
