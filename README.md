@@ -2,7 +2,7 @@
 
 Application SaaS complète pour la gestion des demandes d'aide sociale d'un CSE (Comité Social et Économique). Développée avec React (TypeScript) et Node.js (Express).
 
-## 📋 Table des matières
+## Table des matières
 - [Fonctionnalités](#-fonctionnalités)
 - [Stack Technique](#-stack-technique)
 - [Installation](#-installation)
@@ -52,7 +52,7 @@ Application SaaS complète pour la gestion des demandes d'aide sociale d'un CSE 
 - **Sécurité** : Helmet, CORS
 
 ### Frontend
-- **Framework** : React 18
+- **Framework** : React 
 - **Langage** : TypeScript
 - **UI Library** : Material-UI (MUI) v5
 - **État** : Context API
@@ -67,14 +67,14 @@ Application SaaS complète pour la gestion des demandes d'aide sociale d'un CSE 
 - npm 
 
 1. Cloner le projet
-git clone https://github.com/votre-utilisateur/cse-management-app.git
+git clone https://github.com/Amboara Tsara/cse-management-app.git
 cd cse-management-app
 2. Configuration de la base de données
 # Créer la base de données
 psql -U postgres -c "CREATE DATABASE cse_management;"
 
 # Exécuter le script SQL
-psql -U postgres -d cse_management -f database/schema.sql
+psql -U postgres -d cse_management -f config/schema.sql
 
 3. Backend
 cd backend
