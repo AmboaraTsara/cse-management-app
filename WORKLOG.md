@@ -3,7 +3,7 @@
 
 ## Développement
 - **Date** : 24-26 février 2026
-- **Durée totale** : Environ 8 heures de développement effectif
+- **Durée totale** : Environ 10 heures de développement effectif
 - **Contexte** : Développement réalisé en local avec une coupure de courant de 20h
 
 ## Fonctionnalités développées

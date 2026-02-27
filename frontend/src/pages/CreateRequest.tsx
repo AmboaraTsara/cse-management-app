@@ -22,7 +22,7 @@ const requestTypes = [
 ];
 
 const CreateRequest: React.FC = () => {
-  const { id } = useParams(); // Pour l'édition d'une demande existante
+  const { id } = useParams(); 
   const [formData, setFormData] = useState({
     type: '',
     amount: '',
@@ -48,7 +48,6 @@ const CreateRequest: React.FC = () => {
       if (!id) return;
       const data = await getRequestById(parseInt(id));
 
-      // Vérifier que la demande est bien en DRAFT
       if (data.data.status !== 'DRAFT') {
         setError('Cette demande ne peut plus être modifiée');
         setTimeout(() => navigate('/requests'), 2000);

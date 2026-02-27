@@ -101,11 +101,9 @@ const BudgetManager: React.FC = () => {
 
     return (
         <Container maxWidth="lg" sx={{ mt: 4 }}>
-            {/* En-tête avec titre et bouton historique */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                 <Typography variant="h4">Gestion du budget</Typography>
                 
-                {/* Bouton Historique pour ADMIN */}
                 {user?.role === 'ADMIN' && (
                     <Button
                         component={Link}
@@ -124,7 +122,6 @@ const BudgetManager: React.FC = () => {
             {success && <Alert severity="success" sx={{ mb: 2 }} onClose={() => setSuccess('')}>{success}</Alert>}
 
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, mb: 3 }}>
-                {/* Budget actuel - 1/3 width */}
                 <Box sx={{ flex: '1 1 300px' }}>
                     <Card>
                         <CardContent>
@@ -167,7 +164,6 @@ const BudgetManager: React.FC = () => {
                 )}
             </Box>
 
-            {/* Statistiques rapides pour l'admin */}
             {user?.role === 'ADMIN' && (
                 <Paper sx={{ p: 2, mb: 3 }}>
                     <Box sx={{ display: 'flex', gap: 4, justifyContent: 'space-around' }}>

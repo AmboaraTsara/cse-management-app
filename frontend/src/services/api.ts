@@ -21,7 +21,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Auth
 export const login = async (credentials: LoginCredentials) => {
   const response = await api.post('/auth/login', credentials);
   return response.data;
@@ -32,7 +31,6 @@ export const register = async (userData: any) => {
   return response.data;
 };
 
-// Requests
 export const getRequests = async () => {
   const response = await api.get('/requests');
   return response.data;
@@ -68,7 +66,6 @@ export const deleteRequest = async (id: number) => {
   return response.data;
 };
 
-// Budget
 export const getBudget = async () => {
   const response = await api.get('/budget/current');
   return response.data;

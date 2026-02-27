@@ -18,7 +18,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Vérifier le localStorage au chargement
     const storedToken = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
     

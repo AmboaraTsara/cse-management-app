@@ -12,7 +12,6 @@ interface PrivateRouteProps {
   children: React.ReactNode;
 }
 
-// Layout pour les routes protégées avec bouton de déconnexion
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
 

@@ -105,7 +105,6 @@ const RequestsList: React.FC = () => {
 
   return (
     <>
-      {/* Barre de navigation fixe en haut */}
       <AppBar position="fixed" color="default" elevation={1}>
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
@@ -113,7 +112,7 @@ const RequestsList: React.FC = () => {
           </Typography>
 
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-            {/* Bouton Historique pour ADMIN */}
+
             {user?.role === 'ADMIN' && (
               <Button
                 component={Link}
@@ -125,7 +124,6 @@ const RequestsList: React.FC = () => {
               </Button>
             )}
 
-            {/* Bouton nouvelle demande BENEFICIARY */}
             {user?.role === 'BENEFICIARY' && (
               <Button
                 component={Link}
@@ -143,7 +141,6 @@ const RequestsList: React.FC = () => {
         </Toolbar>
       </AppBar>
 
-      {/* Contenu principal avec marge pour compenser la barre fixe */}
       <Container maxWidth="lg" sx={{ mt: 12 }}>
         <Typography variant="h4" gutterBottom>
           Liste des demandes

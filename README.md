@@ -70,7 +70,7 @@ Application SaaS complète pour la gestion des demandes d'aide sociale d'un CSE 
 git clone [https://github.com/Amboara Tsara/cse-management-app.git](https://github.com/AmboaraTsara/cse-management-app.git)
 cd cse-management-app
 ### 2. Configuration de la base de données
-### Créer la base de données
+#### Créer la base de données
 psql -U postgres -c "CREATE DATABASE cse_management;"
 
 #### Exécuter le script SQL
