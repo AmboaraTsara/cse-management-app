@@ -1,4 +1,3 @@
-// backend/src/controllers/requestController.ts
 import { Request, Response } from 'express';
 import { RequestModel } from '../models/Request';
 import { AuthRequest } from '../middleware/auth';
@@ -23,13 +22,11 @@ export const getAllRequests = async (req: AuthRequest, res: Response) => {
 
 export const getRequestById = async (req: AuthRequest, res: Response) => {
   try {
-    // Validation centralisée
     const result = await ValidationService.validateRequestAccess(req, res);
     if (!result) return;
 
     const { id, request } = result;
 
-    // Vérification RBAC
     if (!['ADMIN', 'MANAGER'].includes(req.user.role) && request.user_id !== req.user.id) {
       await logAction({ user_id: req.user.id, action: 'UNAUTHORIZED_ACCESS', resource: 'request', resource_id: id });
       return ResponseHandler.forbidden(res, 'Non autorisé à voir cette demande');
@@ -44,13 +41,10 @@ export const getRequestById = async (req: AuthRequest, res: Response) => {
 
 export const createRequest = async (req: AuthRequest, res: Response) => {
   try {
-    // Validation des inputs
     if (!ValidationService.validateRequest(req, res)) return;
 
-    // Vérification du rôle
     if (!ValidationService.checkRole(req.user.role, ['BENEFICIARY'], res)) return;
 
-    // Création
     const request = await RequestModel.create({
       user_id: req.user.id,
       type: req.body.type.trim(),
@@ -59,7 +53,6 @@ export const createRequest = async (req: AuthRequest, res: Response) => {
       status: 'DRAFT'
     });
 
-    // Audit
     await logAction({
       user_id: req.user.id,
       action: 'CREATE_REQUEST',
@@ -77,10 +70,8 @@ export const createRequest = async (req: AuthRequest, res: Response) => {
 
 export const updateRequest = async (req: AuthRequest, res: Response) => {
   try {
-    // Validation des inputs
     if (!ValidationService.validateRequest(req, res)) return;
 
-    // Validation complète
     const result = await ValidationService.validateRequestAccess(req, res, {
       checkOwner: true,
       checkStatus: 'DRAFT'
@@ -89,7 +80,6 @@ export const updateRequest = async (req: AuthRequest, res: Response) => {
 
     const { id } = result;
 
-    // Mise à jour
     const updates: any = {};
     if (req.body.type) updates.type = req.body.type.trim();
     if (req.body.amount) updates.amount = parseFloat(req.body.amount);
@@ -137,7 +127,6 @@ export const updateRequestStatus = async (req: AuthRequest, res: Response) => {
 
     await client.query('BEGIN');
 
-    // Vérifier que la demande existe
     const requestResult = await client.query(
       `SELECT r.*, u.first_name as beneficiary_name, u.email as beneficiary_email 
        FROM requests r
@@ -157,7 +146,6 @@ export const updateRequestStatus = async (req: AuthRequest, res: Response) => {
     const request = requestResult.rows[0];
     console.log(' Demande trouvée:', request);
 
-    // Vérifier les permissions selon le statut
     if (status === 'APPROVED' && !['MANAGER', 'ADMIN'].includes(userRole)) {
       await client.query('ROLLBACK');
       return res.status(403).json({
@@ -174,7 +162,6 @@ export const updateRequestStatus = async (req: AuthRequest, res: Response) => {
       });
     }
 
-    // Mettre à jour le statut de la demande d'abord
     const updateFields = ['status = $1'];
     const values = [status];
     let paramIndex = 2;
@@ -201,11 +188,9 @@ export const updateRequestStatus = async (req: AuthRequest, res: Response) => {
       values
     );
 
-    // Si le nouveau statut est PAYÉ, mettre à jour le budget
     if (status === 'PAID') {
       const year = new Date().getFullYear();
-      
-      // Vérifier le budget disponible
+
       const budgetResult = await client.query(
         'SELECT * FROM budgets WHERE year = $1',
         [year]
@@ -214,7 +199,6 @@ export const updateRequestStatus = async (req: AuthRequest, res: Response) => {
       let budget = budgetResult.rows[0];
 
       if (!budget) {
-        // Créer un budget par défaut si inexistant
         const newBudget = await client.query(
           `INSERT INTO budgets (year, total_amount, remaining_amount)
            VALUES ($1, $2, $2)
@@ -223,8 +207,6 @@ export const updateRequestStatus = async (req: AuthRequest, res: Response) => {
         );
         budget = newBudget.rows[0];
       }
-
-      // Vérifier si le budget est suffisant
       if (budget.remaining_amount < request.amount) {
         await client.query('ROLLBACK');
         return res.status(400).json({
@@ -233,7 +215,6 @@ export const updateRequestStatus = async (req: AuthRequest, res: Response) => {
         });
       }
 
-      // Mettre à jour le budget (diminuer le montant restant)
       await client.query(
         `UPDATE budgets 
          SET remaining_amount = remaining_amount - $1,
@@ -242,7 +223,6 @@ export const updateRequestStatus = async (req: AuthRequest, res: Response) => {
         [request.amount, year]
       );
 
-      // Récupérer les infos d'approbation (qui peuvent être NULL si approuvé juste avant)
       const approvalInfo = await client.query(
         `SELECT approved_by, approved_at FROM requests WHERE id = $1`,
         [id]
@@ -251,7 +231,6 @@ export const updateRequestStatus = async (req: AuthRequest, res: Response) => {
       const approvedBy = approvalInfo.rows[0]?.approved_by || req.user?.email || 'Unknown';
       const approvedAt = approvalInfo.rows[0]?.approved_at || new Date();
 
-      // Enregistrer la transaction
       await client.query(
         `INSERT INTO transactions (
           request_id, amount, type, beneficiary_name, 
@@ -271,11 +250,9 @@ export const updateRequestStatus = async (req: AuthRequest, res: Response) => {
       );
     }
 
-    // Si le statut passe de PAYÉ à autre chose (cas de remboursement ou annulation)
     if (request.status === 'PAID' && status !== 'PAID') {
       const year = new Date(request.updated_at).getFullYear();
       
-      // Remettre l'argent dans le budget
       await client.query(
         `UPDATE budgets 
          SET remaining_amount = remaining_amount + $1,
@@ -312,8 +289,6 @@ export const deleteRequest = async (req: AuthRequest, res: Response) => {
     if (!result) return;
 
     const { id, request } = result;
-
-    // Vérification supplémentaire (propriétaire OU admin)
     if (request.user_id !== req.user.id && req.user.role !== 'ADMIN') {
       return ResponseHandler.forbidden(res);
     }
@@ -331,10 +306,8 @@ export const deleteRequest = async (req: AuthRequest, res: Response) => {
 
 export const getUserRequests = async (req: AuthRequest, res: Response) => {
   try {
-    // Validation du rôle
     if (!ValidationService.checkRole(req.user.role, ['ADMIN', 'MANAGER'], res)) return;
 
-    // Validation de l'ID
     const userId = ValidationService.parseId(req.params.userId);
     if (!userId) {
       return ResponseHandler.error(res, 'ID utilisateur invalide', 'INVALID_ID', 400);
