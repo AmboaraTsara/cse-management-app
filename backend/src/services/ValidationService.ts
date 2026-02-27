@@ -1,4 +1,3 @@
-// backend/src/services/validationService.ts
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import { validationResult } from 'express-validator';
@@ -13,7 +12,7 @@ interface ValidationOptions {
 
 export class ValidationService {
   
-  // Validation des erreurs Express-validator
+  // Validation erreurs 
   static validateRequest(req: AuthRequest, res: Response): boolean {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -27,14 +26,14 @@ export class ValidationService {
     return true;
   }
 
-  // Validation et parsing de l'ID
+  // Validation ID
   static parseId(id: any): number | null {
     if (typeof id !== 'string') return null;
     const parsed = parseInt(id, 10);
     return (!isNaN(parsed) && parsed > 0) ? parsed : null;
   }
 
-  // Validation des rôles
+  // Validation rôles
   static checkRole(userRole: string, allowedRoles: string[], res: Response): boolean {
     if (!allowedRoles.includes(userRole)) {
       res.status(403).json({
@@ -53,7 +52,6 @@ export class ValidationService {
     options: ValidationOptions = {}
   ): Promise<any | null> {
     
-    // 1. Valider l'ID
     const id = this.parseId(req.params.id);
     if (!id) {
       res.status(400).json({
@@ -92,7 +90,7 @@ export class ValidationService {
       return null;
     }
 
-    // 5. Vérifier le statut
+    // 5. Vérifier statut
     if (options.checkStatus) {
       const allowedStatuses = Array.isArray(options.checkStatus) 
         ? options.checkStatus 
