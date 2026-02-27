@@ -1,4 +1,3 @@
-// backend/src/models/Budget.ts
 import pool from '../config/database';
 
 export interface Budget {
@@ -12,9 +11,6 @@ export interface Budget {
 
 export class BudgetModel {
   
-  /**
-   * Trouver le budget d'une année spécifique
-   */
   static async findByYear(year: number): Promise<Budget | null> {
     try {
       const result = await pool.query(
@@ -28,9 +24,6 @@ export class BudgetModel {
     }
   }
 
-  /**
-   * Trouver le budget de l'année en cours
-   */
   static async findCurrent(): Promise<Budget | null> {
     try {
       const currentYear = new Date().getFullYear();
@@ -45,9 +38,6 @@ export class BudgetModel {
     }
   }
 
-  /**
-   * Créer un nouveau budget
-   */
   static async create(data: { year: number; total_amount: number; remaining_amount?: number }): Promise<Budget> {
     try {
       const remaining = data.remaining_amount !== undefined ? data.remaining_amount : data.total_amount;
@@ -64,9 +54,6 @@ export class BudgetModel {
     }
   }
 
-  /**
-   * Mettre à jour un budget
-   */
   static async update(year: number, data: Partial<Budget>): Promise<Budget | null> {
     try {
       const fields = [];
@@ -99,9 +86,7 @@ export class BudgetModel {
     }
   }
 
-  /**
-   * Vérifier si le budget est suffisant pour un montant
-   */
+
   static async hasEnoughBudget(year: number, amount: number): Promise<boolean> {
     try {
       const result = await pool.query(
@@ -117,16 +102,13 @@ export class BudgetModel {
     }
   }
 
-  /**
-   * Décrémenter le budget (quand une demande est payée)
-   */
+  
   static async deductAmount(year: number, amount: number): Promise<Budget | null> {
     const client = await pool.connect();
     
     try {
       await client.query('BEGIN');
       
-      // Vérifier le budget
       const checkResult = await client.query(
         'SELECT remaining_amount FROM budgets WHERE year = $1 FOR UPDATE',
         [year]
@@ -141,7 +123,6 @@ export class BudgetModel {
         throw new Error('Budget insuffisant');
       }
       
-      // Décrémenter
       const result = await client.query(
         `UPDATE budgets 
          SET remaining_amount = remaining_amount - $1, 
@@ -163,9 +144,6 @@ export class BudgetModel {
     }
   }
 
-  /**
-   * Obtenir tous les budgets (historique)
-   */
   static async findAll(): Promise<Budget[]> {
     try {
       const result = await pool.query(
@@ -178,9 +156,6 @@ export class BudgetModel {
     }
   }
 
-  /**
-   * Initialiser le budget pour une année si inexistant
-   */
   static async initializeYear(year: number, defaultAmount: number = 50000): Promise<Budget> {
     try {
       const existing = await this.findByYear(year);
