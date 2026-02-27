@@ -1,4 +1,3 @@
-// backend/src/services/auditService.ts
 import pool from '../config/database';
 
 export interface AuditLogData {
@@ -26,6 +25,5 @@ export const logAction = async (logData: AuditLogData): Promise<void> => {
     );
   } catch (error) {
     console.error(' Erreur audit log:', error);
-    // Ne pas bloquer l'application pour un échec d'audit
   }
 };
