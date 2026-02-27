@@ -1,4 +1,3 @@
-// backend/src/models/Request.ts
 import pool from '../config/database';
 
 export interface Request {
