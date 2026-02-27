@@ -6,7 +6,6 @@ dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 
-// Tester la connexion à la DB avant de démarrer
 testDatabaseConnection().then((connected) => {
   if (connected) {
     app.listen(PORT, () => {
