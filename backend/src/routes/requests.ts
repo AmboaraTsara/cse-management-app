@@ -18,13 +18,10 @@ router.use(authenticate);
 
 router.get('/', getAllRequests);
 
-// Demandes utilisateur spécifique
 router.get('/user/:userId', authorize('ADMIN', 'MANAGER'), getUserRequests);
 
-// Détail 
 router.get('/:id', getRequestById);
-
-// Créer 
+ 
 router.post('/',
   authorize('BENEFICIARY'),
   [
@@ -47,13 +44,11 @@ router.put('/:id/submit',
   submitRequest
 );
 
-// Changer le statut (Manager seulement)
 router.put('/:id/status',
   authorize('MANAGER', 'ADMIN'),
   updateRequestStatus
 );
 
-// Supprimer  (DRAFT seulement)
 router.delete('/:id',
   authorize('BENEFICIARY', 'ADMIN'),
   deleteRequest
