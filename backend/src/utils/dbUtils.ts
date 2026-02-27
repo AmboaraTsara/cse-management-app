@@ -25,7 +25,6 @@ export const closeDatabaseConnection = async () => {
   }
 };
 
-// Pour les transactions
 export const withTransaction = async <T>(
   callback: (client: any) => Promise<T>
 ): Promise<T> => {
