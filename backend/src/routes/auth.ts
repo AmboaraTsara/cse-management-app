@@ -4,7 +4,6 @@ import { authenticate } from '../middleware/auth';
 
 const router = express.Router();
 
-// Routes publiques
 router.post('/login', login);
 
 
