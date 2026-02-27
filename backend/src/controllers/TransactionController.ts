@@ -2,10 +2,6 @@ import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import pool from '../config/database';
 
-/**
- * GET /api/transactions
- * Récupérer toutes les transactions (Admin seulement)
- */
 export const getTransactions = async (req: AuthRequest, res: Response) => {
   try {
     const { year } = req.query;
@@ -44,10 +40,6 @@ export const getTransactions = async (req: AuthRequest, res: Response) => {
   }
 };
 
-/**
- * GET /api/transactions/:id
- * Récupérer une transaction spécifique
- */
 export const getTransactionById = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
