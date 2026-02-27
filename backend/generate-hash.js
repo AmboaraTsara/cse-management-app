@@ -7,7 +7,6 @@ bcrypt.hash(password, saltRounds).then(hash => {
   console.log('Mot de passe:', password);
   console.log('Hash bcrypt:', hash);
   
-  // Vérification
   bcrypt.compare(password, hash).then(result => {
     console.log('Vérification:', result ? ' OK' : ' Échec');
   });
