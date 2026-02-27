@@ -1,4 +1,3 @@
-// backend/src/controllers/budgetController.ts
 import { Request, Response } from 'express';
 import { BudgetModel } from '../models/Budget';
 import { AuthRequest } from '../middleware/auth';
@@ -61,9 +60,6 @@ export const getBudgetByYear = async (req: AuthRequest, res: Response) => {
   }
 };
 
-/**
-Mettre à jour  budget (Admin seulement)
- */
 export const updateBudget = async (req: AuthRequest, res: Response) => {
   try {
     const year = parseInt(req.params.year);
@@ -76,18 +72,15 @@ export const updateBudget = async (req: AuthRequest, res: Response) => {
       });
     }
 
-    // Vérifier que le budget existe
     let budget = await BudgetModel.findByYear(year);
 
     if (!budget) {
-      // Créer un nouveau budget
       budget = await BudgetModel.create({
         year,
         total_amount,
         remaining_amount: remaining_amount || total_amount
       });
     } else {
-      // Mettre à jour le budget existant
       budget = await BudgetModel.update(year, {
         total_amount,
         remaining_amount: remaining_amount !== undefined ? remaining_amount : budget.remaining_amount
@@ -109,9 +102,6 @@ export const updateBudget = async (req: AuthRequest, res: Response) => {
   }
 };
 
-/**
- Historique budgets (Admin seulement)
- */
 export const getBudgetHistory = async (req: AuthRequest, res: Response) => {
   try {
     const budgets = await BudgetModel.findAll();
@@ -130,9 +120,6 @@ export const getBudgetHistory = async (req: AuthRequest, res: Response) => {
   }
 };
 
-/**
- * Initialiser budget pour une année 
- */
 export const initializeBudget = async (req: AuthRequest, res: Response) => {
   try {
     const year = parseInt(req.params.year);
@@ -163,9 +150,6 @@ export const initializeBudget = async (req: AuthRequest, res: Response) => {
   }
 };
 
-/**
- Vérifier si budget suffisant
- */
 export const checkBudget = async (req: AuthRequest, res: Response) => {
   try {
     const year = parseInt(req.params.year);
